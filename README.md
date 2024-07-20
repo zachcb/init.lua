@@ -10,6 +10,18 @@ https://www.reddit.com/r/neovim/comments/13pzwq6/is_this_neovim/
 * eslint / prettier
 * 
 
+    
+### Prerequisites
+* git, make, unzup, C Compiler (gcc)
+* ripgrep
+* Clipboard tool (xclip/xsel/win32yank or other depending on platform)
+* A Nerd Font: optional, provides various icons
+  * if you have it set vim.g.have_nerd_font in init.lua to true
+* Language Setup:
+  * If want to write Typescript, you need npm
+  * If want to write Golang, you will need go
+  * etc.
+* fzf
 
 
 
