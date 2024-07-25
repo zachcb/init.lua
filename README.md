@@ -22,6 +22,8 @@ https://www.reddit.com/r/neovim/comments/13pzwq6/is_this_neovim/
   * If want to write Golang, you will need go
   * etc.
 * fzf
+* Styled components
+  * `npm i -g @styled/typescript-styled-plugin typescript-styled-plugin`
 
 
 
