@@ -1,15 +1,13 @@
-local vim = vim
-
 if vim.loader then
-	vim.loader.enable()
-end
-
-_G.dd = function(...)
-	require("util.debug").dump(...)
+  vim.loader.enable()
 end
 
 vim.print = _G.dd
+vim.cmd([[set mouse=a]])
 
+vim.o.statuscolumn = "%s %l %r"
+
+require("config.vim")
 require("config.lazy")
 
 vim.opt.termguicolors = true
