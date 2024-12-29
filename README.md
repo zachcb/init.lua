@@ -42,6 +42,8 @@ nvim
 
 ```
 
+`npm i -g vscode-langservers-extracted`
+
 - Run `:MasonInstallAll` command after lazy.nvim finishes downloading plugins.
 
 ## Update
@@ -91,3 +93,5 @@ rm -Force ~\AppData\Local\nvim-data
 - https://www.reddit.com/r/neovim/comments/13pzwq6/is_this_neovim/
 - https://docs.astronvim.com/
 - https://nvchad.com/docs/quickstart/install
+- https://github.com/ecosse3/nvim
+- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
