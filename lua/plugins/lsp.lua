@@ -31,6 +31,10 @@ return {
     },
     config = function()
       local lspconfig = require("lspconfig");
+      local Path = require("plenary.path");
+
+      -- This path is used for finding a relative path to Yarn's SDK.
+      local eslintNodePath = Path:new('./.yarn/sdks'):absolute() or ''
 
       lspconfig["gdscript"].setup({
         name = "godot",
@@ -174,7 +178,6 @@ return {
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-
       local root_file = {
         '.eslintrc',
         '.eslintrc.js',
@@ -250,12 +253,18 @@ return {
         },
 
         eslint = {
+          -- There is an issue with nodePath not being able to find Yarn SDK in the relative path.
+          -- Eslint can work with npm and pnpm, but Yarn PnP seems to break the resolution of packages.
+          -- The current fix is to pass the absolute path for Yarn SDK.
+          --
           -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/eslint.lua#L51
           -- root_dir = function(fname)
           --   root_file = lspconfig.util.insert_package_json(root_file, 'eslintConfig', fname)
           --   return lspconfig.util.find_git_ancestor or lspconfig.util.root_pattern(unpack(root_file))(fname)
           -- end,
           -- root_dir = lspconfig.util.find_git_ancestor,
+          capabilities = capabilities,
+
           settings = {
             -- packageManager = 'yarn',
             format = false,
@@ -265,6 +274,10 @@ return {
                 mode = "location",
                 -- mode = 'auto'
             },
+            nodePath = eslintNodePath
+            -- nodePath = Path:absolute(".yarn/sdks")
+            -- nodePath = '/home/zach/Workshop/Projects/formative/app-3/.yarn/sdks'
+            -- nodePath = ".yarn/sdks",
             -- nodePath = "/home/zach/.config/nvm/versions/node/v20.17.0/bin/node"
           },
           on_attach = function(client, bufnr)
@@ -272,6 +285,12 @@ return {
               buffer = bufnr,
               command = "EslintFixAll",
             })
+          end,
+          on_new_config = function(config, new_root_dir)
+            config.settings.workspaceFolder = {
+              uri = vim.uri_from_fname(new_root_dir),
+              name = vim.fn.fnamemodify(new_root_dir, ':t')
+            }
           end,
         },
         -- eslint = {
