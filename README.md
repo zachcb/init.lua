@@ -85,6 +85,16 @@ rm -Force ~\AppData\Local\nvim-data
 - testing
 - eslint / prettier
 
+Trying to fix eslint
+
+npm i -g eslint_d
+
+https://github.com/williamboman/mason.nvim/issues/1631
+
+```shell
+  ln -s /home/zach/.local/share/nvim/mason/packages/eslint-lsp/node_modules/vscode-langservers-extracted vscode-langservers-extracted
+```
+
 ### Resources
 
 - https://github.com/nvim-lualine/lualine.nvim#tabline

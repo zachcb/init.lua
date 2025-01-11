@@ -45,7 +45,6 @@ end
 --- @diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -57,25 +56,32 @@ vim.opt.rtp:prepend(lazypath)
 --    :Lazy update
 require("lazy").setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  
-  require 'plugins/enabled',
-  require 'plugins/cheatsheet',
-  require 'plugins/cmp',
-  require 'plugins/colorscheme',
-  require 'plugins/comment',
-  require 'plugins/edgy',
-  require 'plugins/harpoon',
-  require 'plugins/lsp',
-  require 'plugins/markview',
-  require 'plugins/menu',
-  require 'plugins/nvimtree',
-  require 'plugins/rzip',
-  require 'plugins/snacks',
-  require 'plugins/telescope',
-  require 'plugins/trouble',
-  require 'plugins/typescript',
-  require 'plugins/which-key',
+  "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
+
+  spec = {
+    { import = "plugins/enabled" },
+    { import = "plugins/cheatsheet" },
+    { import = "plugins/cmp" },
+    { import = "plugins/colorscheme" },
+    { import = "plugins/comment" },
+    { import = "plugins/edgy" },
+    -- { import = 'plugins/formatting' },
+    { import = "plugins/harpoon" },
+    { import = "plugins/lsp" },
+    { import = "plugins/markview" },
+    { import = "plugins/menu" },
+    -- { import = "plugins/nvim-lint" },
+    { import = "plugins/nvim-tree" },
+    { import = "plugins/rzip" },
+    { import = "plugins/snacks" },
+    { import = "plugins/telescope" },
+    { import = "plugins/trouble" },
+    { import = "plugins/typescript" },
+    { import = "plugins/which-key" },
+    { import = "plugins/oil" },
+    { import = "plugins/bufferline" },
+    { import = "plugins/nvim-dap" },
+  },
 
   defaults = {
     -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
@@ -90,41 +96,25 @@ require("lazy").setup({
   checker = {
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update
-  }, -- automatically check for plugin updates
-  -- performance = {
-  --   rtp = {
-  --     -- disable some rtp plugins
-  --     disabled_plugins = {
-  --       "gzip",
-  --       -- "matchit",
-  --       -- "matchparen",
-  --       -- "netrwPlugin",
-  --       "tarPlugin",
-  --       "tohtml",
-  --       "tutor",
-  --       "zipPlugin",
-  --     },
-  --   },
-  -- },
+  },
+
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
     icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
+      cmd = "⌘",
+      config = "🛠",
+      event = "📅",
+      ft = "📂",
+      init = "⚙",
+      keys = "🗝",
+      plugin = "🔌",
+      runtime = "💻",
+      require = "🌙",
+      source = "📄",
+      start = "🚀",
+      task = "📌",
+      lazy = "💤 ",
     },
   },
 })
-
-

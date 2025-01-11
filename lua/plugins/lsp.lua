@@ -30,6 +30,13 @@ return {
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
+      local lspconfig = require("lspconfig");
+
+      lspconfig["gdscript"].setup({
+        name = "godot",
+        cmd = vim.lsp.rpc.connect("127.0.0.1", "6005"),
+      })
+
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -167,6 +174,22 @@ return {
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
+
+      local root_file = {
+        '.eslintrc',
+        '.eslintrc.js',
+        '.eslintrc.cjs',
+        '.eslintrc.yaml',
+        '.eslintrc.yml',
+        '.eslintrc.json',
+        'eslint.config.js',
+        'eslint.config.mjs',
+        'eslint.config.cjs',
+        'eslint.config.ts',
+        'eslint.config.mts',
+        'eslint.config.cts',
+      }
+
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -190,6 +213,86 @@ return {
         -- ts_ls = {},
         --
 
+        -- you can turn off/on auto_update per tool
+				-- bashls = {},
+				-- vimls = {},
+				-- stylua = {},
+				-- "editorconfig-checker" = {},
+				-- html_lsp = {},
+				-- emmet_ls = {},
+				-- css_lsp = {},
+				-- pyright = {},
+				-- black = {},
+				-- autopep8 = {},
+				-- json_lsp = {},
+				-- prettier = {},
+				-- -- typescript_language_server = {},
+				-- js_debug_adapter = {},
+				-- eslint_d = {},
+				-- eslint_lsp = {},
+				-- codelldb = {},
+				-- tailwindcss_language_server = {},
+				-- clangd = {},
+				-- clang_format = {},
+        cssls = {
+          capabilities = capabilities,
+          settings = {
+            css = { validate = true, lint = {
+              unknownAtRules = "ignore",
+            } },
+            scss = { validate = true, lint = {
+              unknownAtRules = "ignore",
+            } },
+            less = { validate = true, lint = {
+              unknownAtRules = "ignore",
+            } },
+          },
+        },
+
+        eslint = {
+          -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/eslint.lua#L51
+          -- root_dir = function(fname)
+          --   root_file = lspconfig.util.insert_package_json(root_file, 'eslintConfig', fname)
+          --   return lspconfig.util.find_git_ancestor or lspconfig.util.root_pattern(unpack(root_file))(fname)
+          -- end,
+          -- root_dir = lspconfig.util.find_git_ancestor,
+          settings = {
+            -- packageManager = 'yarn',
+            format = false,
+            run = "onType",
+            validate = "on",
+            workspaceDirectory = {
+                mode = "location",
+                -- mode = 'auto'
+            },
+            -- nodePath = "/home/zach/.config/nvm/versions/node/v20.17.0/bin/node"
+          },
+          on_attach = function(client, bufnr)
+            vim.api.nvim_create_autocmd("BufWritePre", {
+              buffer = bufnr,
+              command = "EslintFixAll",
+            })
+          end,
+        },
+        -- eslint = {
+        --   root_dir = lspconfig.util.find_git_ancestor,
+        --   args = {
+        --     "--no-warn-ignored", -- <-- this is the key argument
+        --     "--format",
+        --     "json",
+        --     "--stdin",
+        --     "--stdin-filename",
+        --     function()
+        --      return vim.api.nvim_buf_get_name(0)
+        --     end,
+        --   },
+        --   on_init = function(client)
+        --     client.config.settings.workingDirectory = {
+        --       directory = client.config.root_dir
+        --     }
+        --   end,
+        -- },
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -206,6 +309,70 @@ return {
         },
       }
 
+      -- lspconfig.ts_ls.setup({
+      --   settings = {
+      --     javascript = {
+      --       inlayHints = {
+      --         includeInlayEnumMemberValueHints = true,
+      --         includeInlayFunctionLikeReturnTypeHints = true,
+      --         includeInlayFunctionParameterTypeHints = true,
+      --         includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
+      --         includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+      --         includeInlayPropertyDeclarationTypeHints = true,
+      --         includeInlayVariableTypeHints = false,
+      --       },
+      --     },
+
+      --     typescript = {
+      --       inlayHints = {
+      --         includeInlayEnumMemberValueHints = true,
+      --         includeInlayFunctionLikeReturnTypeHints = true,
+      --         includeInlayFunctionParameterTypeHints = true,
+      --         includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
+      --         includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+      --         includeInlayPropertyDeclarationTypeHints = true,
+      --         includeInlayVariableTypeHints = false,
+      --       },
+      --     },
+      --   },
+      -- })
+
+      -- lspconfig.eslint.setup({
+      --   root_dir = lspconfig.util.find_git_ancestor,
+      --   settings = {
+      --     -- packageManager = 'yarn',
+      --     format = false,
+      --     workspaceDirectory = {
+      --       {
+      --         mode = "location",
+      --       },
+      --     },
+      --     nodePath = "/home/zach/.config/nvm/versions/node/v20.17.0/bin/node"
+      --   },
+      --   on_attach = function(client, bufnr)
+      --     vim.api.nvim_create_autocmd("BufWritePre", {
+      --       buffer = bufnr,
+      --       command = "EslintFixAll",
+      --     })
+      --   end,
+      -- })
+
+      -- CSS LS
+		-- lspconfig.cssls.setup({
+		-- 	capabilities = capabilities,
+		-- 	settings = {
+		-- 		css = { validate = true, lint = {
+		-- 			unknownAtRules = "ignore",
+		-- 		} },
+		-- 		scss = { validate = true, lint = {
+		-- 			unknownAtRules = "ignore",
+		-- 		} },
+		-- 		less = { validate = true, lint = {
+		-- 			unknownAtRules = "ignore",
+		-- 		} },
+		-- 	},
+		-- })
+
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
       --  other tools, you can run
@@ -218,11 +385,22 @@ return {
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        "eslint",
+        -- "eslint_d",
         "stylua", -- Used to format Lua code
       })
-      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+
+      require("mason-tool-installer").setup({
+        ensure_installed = ensure_installed,
+        auto_update = true,
+        run_on_start = true,
+        start_delay = 3000, -- 3 second delay
+        debounce_hours = 5, -- at least 5 hours between attempts to install/update
+      })
 
       require("mason-lspconfig").setup({
+        -- auto installation
+			  automatic_installation = true,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
