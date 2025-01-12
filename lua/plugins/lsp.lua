@@ -34,7 +34,7 @@ return {
       local Path = require("plenary.path");
 
       -- This path is used for finding a relative path to Yarn's SDK.
-      local eslintNodePath = Path:new('./.yarn/sdks'):absolute() or ''
+      local nodePath = Path:new('./.yarn/sdks'):absolute() or ''
 
       lspconfig["gdscript"].setup({
         name = "godot",
@@ -263,35 +263,29 @@ return {
           --   return lspconfig.util.find_git_ancestor or lspconfig.util.root_pattern(unpack(root_file))(fname)
           -- end,
           -- root_dir = lspconfig.util.find_git_ancestor,
-          capabilities = capabilities,
+          -- capabilities = capabilities,
 
           settings = {
-            -- packageManager = 'yarn',
             format = false,
             run = "onType",
             validate = "on",
             workspaceDirectory = {
                 mode = "location",
-                -- mode = 'auto'
             },
-            nodePath = eslintNodePath
-            -- nodePath = Path:absolute(".yarn/sdks")
-            -- nodePath = '/home/zach/Workshop/Projects/formative/app-3/.yarn/sdks'
-            -- nodePath = ".yarn/sdks",
-            -- nodePath = "/home/zach/.config/nvm/versions/node/v20.17.0/bin/node"
+            nodePath = nodePath
           },
-          on_attach = function(client, bufnr)
-            vim.api.nvim_create_autocmd("BufWritePre", {
-              buffer = bufnr,
-              command = "EslintFixAll",
-            })
-          end,
-          on_new_config = function(config, new_root_dir)
-            config.settings.workspaceFolder = {
-              uri = vim.uri_from_fname(new_root_dir),
-              name = vim.fn.fnamemodify(new_root_dir, ':t')
-            }
-          end,
+          -- on_attach = function(client, bufnr)
+          --   vim.api.nvim_create_autocmd("BufWritePre", {
+          --     buffer = bufnr,
+          --     command = "EslintFixAll",
+          --   })
+          -- end,
+          -- on_new_config = function(config, new_root_dir)
+          --   config.settings.workspaceFolder = {
+          --     uri = vim.uri_from_fname(new_root_dir),
+          --     name = vim.fn.fnamemodify(new_root_dir, ':t')
+          --   }
+          -- end,
         },
         -- eslint = {
         --   root_dir = lspconfig.util.find_git_ancestor,

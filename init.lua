@@ -1,6 +1,6 @@
 local vim = vim
 
--- I forget what this does
+-- I forgot what this does
 if vim.loader then
   vim.loader.enable()
 end
@@ -55,9 +55,6 @@ vim.opt.rtp:prepend(lazypath)
 --  To update plugins you can run
 --    :Lazy update
 require("lazy").setup({
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
-
   spec = {
     { import = "plugins/enabled" },
     { import = "plugins/cheatsheet" },
@@ -65,12 +62,11 @@ require("lazy").setup({
     { import = "plugins/colorscheme" },
     { import = "plugins/comment" },
     { import = "plugins/edgy" },
-    -- { import = 'plugins/formatting' },
+    { import = 'plugins/formatting' },
     { import = "plugins/harpoon" },
     { import = "plugins/lsp" },
     { import = "plugins/markview" },
     { import = "plugins/menu" },
-    -- { import = "plugins/nvim-lint" },
     { import = "plugins/nvim-tree" },
     { import = "plugins/rzip" },
     { import = "plugins/snacks" },
@@ -79,7 +75,6 @@ require("lazy").setup({
     { import = "plugins/typescript" },
     { import = "plugins/which-key" },
     { import = "plugins/oil" },
-    { import = "plugins/bufferline" },
     { import = "plugins/nvim-dap" },
   },
 
