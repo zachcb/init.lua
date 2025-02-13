@@ -10,10 +10,6 @@ vim.g.have_nerd_font = true
 
 vim.cmd([[set mouse=a]])
 
--- Import Vim config files
-require("config.keymap")
-require("config.vim")
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -42,6 +38,16 @@ if not vim.loop.fs_stat(lazypath) then
   end
 end
 
+-- Make line numbers default
+vim.opt.number = true
+
+-- You can also add relative line numbers, to help with jumping.
+--  Experiment for yourself to see if you like it!
+vim.opt.relativenumber = true
+
+vim.o.signcolumn = "yes"
+vim.o.statuscolumn = "%s %l %r"
+
 --- @diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
@@ -56,23 +62,141 @@ vim.opt.rtp:prepend(lazypath)
 --    :Lazy update
 require("lazy").setup({
   spec = {
-    { import = "plugins/enabled" },
-    { import = "plugins/cheatsheet" },
-    { import = "plugins/cmp" },
-    { import = "plugins/colorscheme" },
-    { import = "plugins/comment" },
-    { import = "plugins/edgy" },
-    { import = 'plugins/formatting' },
-    { import = "plugins/harpoon" },
-    { import = "plugins/lsp" },
-    { import = "plugins/markview" },
-    { import = "plugins/snacks" },
-    { import = "plugins/telescope" },
-    { import = "plugins/trouble" },
-    { import = "plugins/typescript" },
-    { import = "plugins/which-key" },
-    { import = "plugins/oil" },
-    { import = "plugins/nvim-dap" },
+    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    {
+      "sudormrfbin/cheatsheet.nvim",
+
+      dependencies = {
+        "nvim-telescope/telescope.nvim",
+        "nvim-lua/popup.nvim",
+        "nvim-lua/plenary.nvim",
+      },
+    },
+    {
+      "mfussenegger/nvim-dap",
+      dependencies = {
+        "rcarriga/nvim-dap-ui",
+        -- virtual text for the debugger
+        {
+          "theHamsta/nvim-dap-virtual-text",
+          opts = {},
+        },
+      },
+      config = function()
+        local dap = require("dap")
+        dap.adapters.godot = {
+          type = "server",
+          host = "127.0.0.1",
+          port = 6006,
+        }
+
+        dap.configurations.gdscript = {
+          {
+            type = "godot",
+            request = "launch",
+            name = "Launch scene",
+            project = "${workspaceFolder}",
+            launch_scene = true,
+          },
+        }
+      end,
+    },
+    {
+      "stevearc/oil.nvim",
+      ---@module 'oil'
+      ---@type oil.SetupOpts
+      opts = {},
+      -- Optional dependencies
+      dependencies = { { "echasnovski/mini.icons", opts = {} } },
+      -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
+      config = function()
+        local oil = require("oil")
+
+        oil.setup({
+          default_file_explorer = true,
+        })
+      end,
+    },
+    {
+      "OXY2DEV/markview.nvim",
+      lazy = false,
+      dependencies = {
+        "nvim-treesitter/nvim-treesitter",
+        "nvim-tree/nvim-web-devicons",
+      },
+    },
+    {
+      "pmizio/typescript-tools.nvim",
+      dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+      opts = {},
+      settings = {
+        tsserver_plugins = {
+          -- for TypeScript v4.9+
+          "@styled/typescript-styled-plugin",
+          -- or for older TypeScript versions
+          -- "typescript-styled-plugin",
+        },
+        code_lens = "auto",
+      },
+    },
+    {
+      "neovim/nvim-lspconfig",
+      dependencies = { "nvim-lua/plenary.nvim" },
+      opts = {
+        servers = { eslint = {} },
+      },
+      config = function()
+        local Path = require("plenary.path")
+
+        -- This path is used for finding a relative path to Yarn's SDK.
+        local nodePath = Path:new("./.yarn/sdks"):absolute() or ""
+
+        local server = {
+          settings = {
+            format = false,
+            run = "onType",
+            validate = "on",
+            workspaceDirectory = {
+              mode = "location",
+            },
+            nodePath = nodePath,
+          },
+        }
+
+        local function get_client(buf)
+          return LazyVim.lsp.get_clients({ name = "eslint", bufnr = buf })[1]
+        end
+
+        local formatter = LazyVim.lsp.formatter({
+          name = "eslint: lsp",
+          primary = false,
+          priority = 200,
+          filter = "eslint",
+        })
+
+        -- Use EslintFixAll on Neovim < 0.10.0
+        if not pcall(require, "vim.lsp._dynamic") then
+          formatter.name = "eslint: EslintFixAll"
+          formatter.sources = function(buf)
+            local client = get_client(buf)
+            return client and { "eslint" } or {}
+          end
+          formatter.format = function(buf)
+            local client = get_client(buf)
+            if client then
+              local diag = vim.diagnostic.get(buf, { namespace = vim.lsp.diagnostic.get_namespace(client.id) })
+              if #diag > 0 then
+                vim.cmd("EslintFixAll")
+              end
+            end
+          end
+        end
+
+        -- register the formatter with LazyVim
+        LazyVim.format.register(formatter)
+        require("lspconfig")["eslint"].setup(server)
+      end,
+    },
   },
 
   defaults = {
@@ -84,6 +208,8 @@ require("lazy").setup({
     version = false, -- always use the latest git commit
     -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
+
+  install = { colorscheme = { "dracula" } },
 
   checker = {
     enabled = true, -- check for plugin updates periodically
