@@ -79,6 +79,19 @@ return {
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
+    -- vim.api.nvim_create_autocmd({"LspAttach"}, {
+    --   callback = function()
+    --     wk.register({
+    --       g = {
+    --         name = "Goto",
+    --         d = { vim.lsp.buf.definition, "Go to definition" },
+    --         r = { require("telescope.builtin").lsp_references,
+    --           "Open a telescope window with references" },
+    --       },
+    --     }, { buffer = 0 })
+    --   end
+    -- })
+
     -- Slightly advanced example of overriding default behavior and theme
     vim.keymap.set('n', '<leader>/', function()
       -- You can pass additional configuration to Telescope to change the theme, layout, etc.
